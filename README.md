@@ -1,166 +1,162 @@
-Here's a **simple README** for your **Golang Microservices with Clean Architecture, SOLID Principle, JWT Authentication, and Kubernetes Deployment** 🚀.
+Berikut adalah file **README.md** untuk menjalankan **User Service** dalam arsitektur Clean Architecture dengan **Golang, Kubernetes, dan Docker**.  
 
 ---
 
-## 🔥 Microservices Architecture with Golang, JWT & Kubernetes
-This project is a **microservice-based architecture** built using **Golang** with **Clean Architecture** and **SOLID Principles**. It consists of the following services:
-
-- **User Service** (Register, Login, Get Profile)
-- JWT Authentication
-- MongoDB as Database
-- Docker & Kubernetes for Deployment
+## **User Service - Clean Architecture**
+User Service adalah microservice untuk mengelola pengguna dalam sistem. Proyek ini dibangun dengan **Golang**, **Gin Framework**, dan menggunakan **PostgreSQL** sebagai database.
 
 ---
 
-### 📌 Tech Stack
-- Golang
-- MongoDB
-- JWT Authentication
-- Docker
-- Kubernetes
-- SOLID Principles
-- Clean Architecture
+## **📌 Fitur**
+- **Registrasi Pengguna** (`POST /users/register`)
+- **Clean Architecture** sesuai dengan prinsip **SOLID**
+- **Kubernetes-ready** dengan deployment manifest
+- **Dockerized** untuk memudahkan deployment
 
 ---
 
-## 🏗️ Project Structure
-```bash
-user-service
-├── cmd               # App Bootstrap
-├── config            # Configuration Files
-├── internal          # Business Logic
-│   ├── entity       # Entities (Models)
-│   ├── repository   # Data Access Layer
-│   ├── usecase      # Business Logic Layer
-│   └── delivery     # HTTP Handlers
-├── infrastructure    # Database & External Services
-└── Dockerfile        # Docker Image
+## **🚀 Cara Menjalankan**
+
+### **1️⃣ Clone Repository**
+```sh
+git clone https://github.com/your-repo/user-service.git
+cd user-service
+```
+
+### **2️⃣ Setup Environment**
+Buat file `.env` di root project:
+```
+DB_HOST=localhost
+DB_USER=postgres
+DB_PASSWORD=secret
+DB_NAME=user_db
+DB_PORT=5432
+APP_PORT=8080
 ```
 
 ---
 
-## ⚙️ How to Run Locally
-
-### 1. Clone Repository
-```bash
-git clone https://github.com/yourusername/microservices-golang.git
-cd microservices-golang
+### **3️⃣ Jalankan Database PostgreSQL (Docker)**
+Pastikan Anda memiliki **Docker** terinstal, lalu jalankan perintah berikut:
+```sh
+docker run --name user-db -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret -e POSTGRES_DB=user_db -p 5432:5432 -d postgres
 ```
 
 ---
 
-### 2. Setup MongoDB
-Use Docker to run MongoDB locally:
-```bash
-docker run -d -p 27017:27017 --name mongo mongo:latest
-```
-
----
-
-### 3. Run the Service
-```bash
+### **4️⃣ Jalankan Aplikasi Secara Lokal**
+Pastikan **Go** telah terinstal, lalu jalankan:
+```sh
 go mod tidy
 go run cmd/main.go
 ```
+Aplikasi akan berjalan di `http://localhost:8080`.
 
 ---
 
-### 4. API Endpoints
-| Endpoint   | Method | Description        |
-|-----------|--------|-------------------|
-| `/register` | POST   | Register User     |
-| `/login`    | POST   | Login User       |
-| `/profile`  | GET    | Get Profile (JWT Required) |
+### **5️⃣ Testing API**
+Gunakan `cURL` atau **Postman** untuk menguji API.
 
----
-
-## 🔑 Example Request
-### Register User
-```bash
-POST /register
-Content-Type: application/json
-
-{
+#### 🔹 **Registrasi User**
+```sh
+curl -X POST http://localhost:8080/users/register -H "Content-Type: application/json" -d '{
   "name": "John Doe",
-  "email": "john@mail.com",
-  "password": "password123"
-}
+  "email": "john@example.com",
+  "password": "password123",
+  "role_id": 1
+}'
 ```
-
----
-
-### Login User
-```bash
-POST /login
-Content-Type: application/json
-
-{
-  "email": "john@mail.com",
-  "password": "password123"
-}
-```
-
-**Response:**
+**Respon Sukses**
 ```json
 {
-  "token": "JWT_TOKEN_HERE"
+  "message": "User created successfully!"
 }
 ```
 
 ---
 
-### Get Profile
-```bash
-GET /profile
-Authorization: Bearer JWT_TOKEN_HERE
-```
-
----
-
-## 🐳 Docker Commands
-### Build Docker Image
-```bash
+## **📦 Jalankan dengan Docker**
+### **1️⃣ Build Docker Image**
+```sh
 docker build -t user-service .
 ```
-
----
-
-### Run Docker
-```bash
-docker run -d -p 8081:8081 user-service
+### **2️⃣ Jalankan Container**
+```sh
+docker run -p 8080:8080 --env-file .env user-service
 ```
 
 ---
 
-## ☸️ Deploy to Kubernetes
-1. Apply Deployment & Service
-```bash
-kubectl apply -f deployment.yml
-kubectl apply -f service.yml
+## **📌 Deploy ke Kubernetes**
+Pastikan **kubectl** dan **minikube** sudah diinstal.
+
+### **1️⃣ Start Minikube**
+```sh
+minikube start
 ```
 
-2. Access the Service
-```bash
-http://localhost:30081/register
+### **2️⃣ Deploy ke Kubernetes**
+```sh
+kubectl apply -f k8s/user-service.yaml
+```
+
+### **3️⃣ Cek Status Pod**
+```sh
+kubectl get pods
+```
+
+### **4️⃣ Akses Service**
+```sh
+kubectl port-forward svc/user-service 8080:80
+```
+API dapat diakses di `http://localhost:8080`.
+
+---
+
+## **📜 Struktur Proyek**
+```
+user-service/
+  ├── cmd/
+  │   ├── main.go           # Entry point
+  ├── config/
+  │   ├── db.go             # Database configuration
+  ├── internal/
+  │   ├── entity/           # Domain models
+  │   ├── repository/       # Data access layer
+  │   ├── usecase/          # Business logic
+  │   ├── handler/          # API handlers
+  ├── infrastructure/
+  │   ├── router.go         # HTTP router setup
+  ├── k8s/
+  │   ├── user-service.yaml # Kubernetes deployment file
+  ├── Dockerfile            # Docker image build file
+  ├── .env                  # Environment variables
+  ├── go.mod                # Go module dependencies
 ```
 
 ---
 
-## 🎯 Environment Variables
-| Variable      | Description       |
-|--------------|------------------|
-| `MONGO_URI`  | MongoDB Connection String |
-| `JWT_SECRET` | JWT Secret Key    |
+## **📌 Teknologi yang Digunakan**
+- **Golang** (Gin Framework)
+- **PostgreSQL** (Database)
+- **Docker** (Containerization)
+- **Kubernetes** (Orchestration)
+- **Clean Architecture** (SOLID Principles)
 
 ---
 
-## 📄 License
-MIT License
+## **📢 TODO**
+✅ Implementasi **User Service**  
+✅ Docker & Kubernetes Deployment  
+🔜 Tambahkan **Role Service & Permission Service**  
+🔜 Gunakan **gRPC untuk komunikasi antar microservices**  
+🔜 Implementasi **JWT Authentication**  
 
 ---
 
+## **📞 Kontak & Kontribusi**
+Jika ada pertanyaan atau ingin berkontribusi, silakan buat **Pull Request** atau hubungi saya di `penadidik@gmail.com`.
+
 ---
 
-✅ Now your Microservices are ready for production 🚀🔥  
 
-Do you need **Swagger API Documentation + Postman Collection**? 📄✨

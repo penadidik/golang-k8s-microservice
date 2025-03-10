@@ -1,22 +1,21 @@
 package main
 
 import (
-	"net/http"
-
+	"fmt"
+	"log"
+	"user-service/config"
 	"user-service/infrastructure"
-	"user-service/internal/delivery"
-	"user-service/internal/repository"
-	"user-service/internal/usecase"
 )
 
 func main() {
-	db := infrastructure.InitMongo()
-	userRepo := repository.NewUserRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepo)
-	handler := delivery.NewUserHandler(userUsecase)
+	// Inisialisasi database
+	db := config.InitDB()
 
-	http.HandleFunc("/register", handler.Register)
-	http.HandleFunc("/login", handler.Login)
+	// Setup router
+	r := infrastructure.SetupRouter(db)
 
-	http.ListenAndServe(":8081", nil)
+	// Start server
+	port := ":8080"
+	fmt.Println("User Service running on", port)
+	log.Fatal(r.Run(port))
 }
